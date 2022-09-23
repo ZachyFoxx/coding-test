@@ -65,6 +65,13 @@ export class BirdhouseController {
   ): Promise<Birdhouse> {
     const { longitude, latitude } = body;
 
+    // Ensure we are working with numbers and not strings
+    if (isNaN(longitude) || isNaN(latitude))
+      throw new HttpException(
+        'Please enter a valid integer',
+        HttpStatus.BAD_REQUEST,
+      );
+
     if (!longitude || !latitude)
       throw new HttpException(
         'Please enter a longitude and latitude.',
@@ -91,6 +98,13 @@ export class BirdhouseController {
     @Body() body,
   ): Promise<Birdhouse> {
     const { eggs, birds } = body;
+
+    // Ensure we are working with numbers and not strings
+    if (isNaN(eggs) || isNaN(birds))
+      throw new HttpException(
+        'Please enter a valid integer',
+        HttpStatus.BAD_REQUEST,
+      );
 
     if (!eggs || !birds)
       throw new HttpException(
