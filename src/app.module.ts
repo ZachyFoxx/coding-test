@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 
 @Module({
   imports: [BirdhouseModule],
-  controllers: [AppController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

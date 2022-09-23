@@ -15,11 +15,14 @@ export class Birdhouse {
   eggs: number;
 
   @Column('int')
-  lattitude: number;
+  latitude: number;
 
   @Column('int')
   longitude: number;
 
-  @Column('string')
+  @Column()
   name: string;
+
+  @Column('float', { default: Date.now() })
+  last_update: number;
 }

@@ -1,9 +1,18 @@
+import { appDataSource } from './../database/data-source';
 import { Birdhouse } from 'src/database';
 import { FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { Events } from 'src/database/entity/Events';
 
 export class BirdhouseService {
-  constructor(private readonly birdhouseRepository: Repository<Birdhouse>) {}
+  constructor(
+    private readonly birdhouseRepository: Repository<Birdhouse> = appDataSource.getRepository(
+      Birdhouse,
+    ),
+    private readonly eventRepository: Repository<Events> = appDataSource.getRepository(
+      Events,
+    ),
+  ) {}
 
   /**
    * Get all birdhouses in the database
@@ -38,11 +47,22 @@ export class BirdhouseService {
     eggs: number,
   ): Promise<Birdhouse> {
     const birdhouse = await this.birdhouseRepository.findOne({
-      where: { ubid: houseId },
+      where: { uuid: houseId },
     });
+
+    const old_birds = birdhouse.birds;
+    const old_eggs = birdhouse.eggs;
 
     birdhouse.birds = birds;
     birdhouse.eggs = eggs;
+
+    await this.eventRepository.insert({
+      birdhouse: birdhouse.uuid,
+      egg_difference: eggs - old_eggs,
+      birds_difference: birds - old_birds,
+      longitude_difference: 0,
+      latitude_difference: 0,
+    });
 
     await this.birdhouseRepository.save(birdhouse);
 
@@ -53,22 +73,33 @@ export class BirdhouseService {
    * Update the location of a birdhouse
    * @param houseId The ID of the house to update
    * @param longitude The new longitude
-   * @param lattitude The new lattitude
+   * @param latitude The new latitude
    * @returns A promise containing the updated birdhouse
    */
   async updateLocation(
     houseId: string,
     longitude: number,
-    lattitude: number,
+    latitude: number,
   ): Promise<Birdhouse> {
     const birdhouse = await this.birdhouseRepository.findOne({
-      where: { ubid: houseId },
+      where: { uuid: houseId },
     });
 
+    const old_longitude = birdhouse.longitude;
+    const old_latitude = birdhouse.latitude;
+
     birdhouse.longitude = longitude;
-    birdhouse.lattitude = lattitude;
+    birdhouse.latitude = latitude;
 
     await this.birdhouseRepository.save(birdhouse);
+
+    await this.eventRepository.insert({
+      birdhouse: birdhouse.uuid,
+      egg_difference: 0,
+      birds_difference: 0,
+      longitude_difference: longitude - old_longitude,
+      latitude_difference: latitude - old_latitude,
+    });
 
     return birdhouse;
   }
@@ -76,20 +107,20 @@ export class BirdhouseService {
   /**
    * Create a new birdhouse
    * @param longitude Longitude of the house
-   * @param lattitude Lattitude of the house
+   * @param latitude Latitude of the house
    * @param name The name of the hose
    * @returns A promise containing the bitdhouse
    */
   async createHouse(
     longitude: number,
-    lattitude: number,
+    latitude: number,
     name: string,
   ): Promise<Birdhouse> {
     const birdhouse = this.birdhouseRepository.create({
       ubid: uuidv4(),
       name: name,
       longitude: longitude,
-      lattitude: lattitude,
+      latitude: latitude,
       birds: 0,
       eggs: 0,
     });
