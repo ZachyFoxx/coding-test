@@ -13,7 +13,7 @@ export class AuthMiddleware implements NestMiddleware {
 
   use(req: any, res: any, next: (error?: any) => void) {
     // Get our auth header
-    const authHeader = req.headers.authorization;
+    const authHeader = req.get('X-UBID');
     if (!authHeader)
       throw new HttpException('Not Authorized', HttpStatus.UNAUTHORIZED);
 
