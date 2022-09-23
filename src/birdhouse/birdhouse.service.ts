@@ -1,6 +1,6 @@
 import { birdhouseDS } from './database/data-source';
 import { Birdhouse } from 'src/birdhouse/database';
-import { FindOneOptions, LessThan, MoreThan, Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Events } from 'src/birdhouse/database/entity/Events';
 

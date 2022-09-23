@@ -1,6 +1,6 @@
-import { Requests } from './../database/entity/Requests';
-import { birdhouseDS } from './../database/data-source';
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { birdhouseDS } from '../database';
+import { Requests } from '../database/entity/Requests';
 const reqs = birdhouseDS.getRepository(Requests);
 
 // Log anything and everything.
