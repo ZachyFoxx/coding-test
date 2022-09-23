@@ -1,4 +1,4 @@
-import { appDataSource } from './../database/data-source';
+import { birdhouseDS } from './../database/data-source';
 import { Birdhouse } from 'src/database';
 import { FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -6,10 +6,10 @@ import { Events } from 'src/database/entity/Events';
 
 export class BirdhouseService {
   constructor(
-    private readonly birdhouseRepository: Repository<Birdhouse> = appDataSource.getRepository(
+    private readonly birdhouseRepository: Repository<Birdhouse> = birdhouseDS.getRepository(
       Birdhouse,
     ),
-    private readonly eventRepository: Repository<Events> = appDataSource.getRepository(
+    private readonly eventRepository: Repository<Events> = birdhouseDS.getRepository(
       Events,
     ),
   ) {}
@@ -50,6 +50,7 @@ export class BirdhouseService {
       where: { uuid: houseId },
     });
 
+    // Keep our old resident information in memory for later use
     const old_birds = birdhouse.birds;
     const old_eggs = birdhouse.eggs;
 
@@ -58,7 +59,7 @@ export class BirdhouseService {
 
     await this.eventRepository.insert({
       birdhouse: birdhouse.uuid,
-      egg_difference: eggs - old_eggs,
+      egg_difference: eggs - old_eggs, // Calculate the difference between the new and old resident information
       birds_difference: birds - old_birds,
       longitude_difference: 0,
       latitude_difference: 0,
@@ -85,6 +86,7 @@ export class BirdhouseService {
       where: { uuid: houseId },
     });
 
+    // Same as the resident case.
     const old_longitude = birdhouse.longitude;
     const old_latitude = birdhouse.latitude;
 
@@ -97,7 +99,7 @@ export class BirdhouseService {
       birdhouse: birdhouse.uuid,
       egg_difference: 0,
       birds_difference: 0,
-      longitude_difference: longitude - old_longitude,
+      longitude_difference: longitude - old_longitude, // Calculate our difference.
       latitude_difference: latitude - old_latitude,
     });
 
@@ -117,11 +119,11 @@ export class BirdhouseService {
     name: string,
   ): Promise<Birdhouse> {
     const birdhouse = this.birdhouseRepository.create({
-      ubid: uuidv4(),
+      ubid: uuidv4(), // Random UUID -- Maybe we should check if we already have this UUID, just to be safe.
       name: name,
       longitude: longitude,
       latitude: latitude,
-      birds: 0,
+      birds: 0, // We just made this house, no birds or eggs yet!
       eggs: 0,
     });
 

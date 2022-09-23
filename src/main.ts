@@ -1,9 +1,9 @@
-import { appDataSource } from './database/data-source';
+import { birdhouseDS } from './database/data-source';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  appDataSource.initialize().catch((err) => {
+  birdhouseDS.initialize().catch((err) => {
     console.log(
       `Unable to initialize database, is it configured correctly? \n${err}`,
     );

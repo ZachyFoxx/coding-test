@@ -5,7 +5,8 @@ import { Birdhouse } from './entity/Birdhouse';
 import { Events } from './entity/Events';
 dotenv.config();
 
-export const appDataSource = new DataSource({
+// Our datasource for the birdhouse -- Yay TypeORM!
+export const birdhouseDS = new DataSource({
   type: 'postgres',
   host: process.env.DATABASE_HOST,
   port: process.env.DATABASE_PORT as unknown as number,

@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { validate as uuidValidate } from 'uuid';
 
+// Simple, yet useful middleware.
+// This ensures the UUID being passed to the database is actually a UUID. This will prevent many, *many* errors.
 @Injectable()
 export class idValidateMiddleware implements NestMiddleware {
   use(req: any, res: any, next: (error?: any) => void) {

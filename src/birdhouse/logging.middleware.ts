@@ -1,8 +1,9 @@
 import { Requests } from './../database/entity/Requests';
-import { appDataSource } from './../database/data-source';
+import { birdhouseDS } from './../database/data-source';
 import { Injectable, NestMiddleware } from '@nestjs/common';
-const reqs = appDataSource.getRepository(Requests);
+const reqs = birdhouseDS.getRepository(Requests);
 
+// Log anything and everything.
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
   use(req: any, res: any, next: (error?: any) => void) {
