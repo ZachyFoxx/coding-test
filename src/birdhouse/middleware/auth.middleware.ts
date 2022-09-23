@@ -1,4 +1,4 @@
-import { BirdhouseService } from './birdhouse.service';
+import { BirdhouseService } from '../birdhouse.service';
 import {
   HttpException,
   HttpStatus,
@@ -11,7 +11,7 @@ import { validate as uuidValidate } from 'uuid';
 export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly birdhouseService: BirdhouseService) {}
 
-  use(req: any, res: any, next: (error?: any) => void) {
+  async use(req: any, res: any, next: (error?: any) => void) {
     // Get our auth header
     const authHeader = req.get('X-UBID');
     if (!authHeader)
@@ -22,8 +22,8 @@ export class AuthMiddleware implements NestMiddleware {
       throw new HttpException('Not Authorized', HttpStatus.UNAUTHORIZED);
 
     // Now make sure that UUID, or UBID, is in our system
-    const birdhouse = this.birdhouseService.findOne({
-      where: { ubid: authHeader },
+    const birdhouse = await this.birdhouseService.findOne({
+      where: { ubid: authHeader, uuid: req.params.id },
     });
 
     // YOU SHALL NOT PASS! (This UBID does not exist in our system)

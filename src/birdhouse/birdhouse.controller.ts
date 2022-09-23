@@ -1,5 +1,5 @@
 import { CreateBirdhouseDto } from './dto/CreateBirdhouseDto';
-import { Birdhouse } from './../database/entity/Birdhouse';
+import { Birdhouse } from './database/entity/Birdhouse';
 import {
   Body,
   Controller,
@@ -22,6 +22,12 @@ export class BirdhouseController {
     const birdhouse = await this.birdhouseService.findOne({
       where: { uuid: id },
     });
+
+    if (!birdhouse)
+      throw new HttpException(
+        'No birdhouse with that ID found!',
+        HttpStatus.BAD_REQUEST,
+      );
 
     // Remove information the public end-user doesn't need
     delete birdhouse.ubid;
@@ -57,6 +63,14 @@ export class BirdhouseController {
     @Param('id') id: string,
     @Body() body,
   ): Promise<Birdhouse> {
+    const { longitude, latitude } = body;
+
+    if (!longitude || !latitude)
+      throw new HttpException(
+        'Please enter a longitude and latitude.',
+        HttpStatus.BAD_REQUEST,
+      );
+
     const birdhouse = await this.birdhouseService.updateLocation(
       id,
       body.longitude,
@@ -77,6 +91,13 @@ export class BirdhouseController {
     @Body() body,
   ): Promise<Birdhouse> {
     const { eggs, birds } = body;
+
+    if (!eggs || !birds)
+      throw new HttpException(
+        'Please enter the amount of eggs and birds',
+        HttpStatus.BAD_REQUEST,
+      );
+
     // We can't have negative birds or eggs -- unless we implement a debt system... :disgust:
     if (eggs < 0 || birds < 0)
       throw new HttpException(

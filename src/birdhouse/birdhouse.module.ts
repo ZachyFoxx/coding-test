@@ -1,4 +1,5 @@
-import { AuthMiddleware } from './auth.middleware';
+import { PruneMiddleware } from './middleware/prune.middleware';
+import { AuthMiddleware } from './middleware/auth.middleware';
 import { BirdhouseController } from './birdhouse.controller';
 import { BirdhouseService } from './birdhouse.service';
 import {
@@ -7,8 +8,8 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { idValidateMiddleware } from './idValidate.middleware';
-import { LoggingMiddleware } from './logging.middleware';
+import { idValidateMiddleware } from './middleware/idValidate.middleware';
+import { LoggingMiddleware } from './middleware/logging.middleware';
 
 // Time for some "voo-doo magic".
 @Module({
@@ -29,7 +30,7 @@ export class BirdhouseModule implements NestModule {
         { path: 'house/:id/residency', method: RequestMethod.POST },
       )
       // Log *any* requests made
-      .apply(LoggingMiddleware)
+      .apply(LoggingMiddleware, PruneMiddleware)
       .forRoutes('*');
   }
 }

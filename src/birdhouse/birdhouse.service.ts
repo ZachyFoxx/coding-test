@@ -1,8 +1,8 @@
-import { birdhouseDS } from './../database/data-source';
-import { Birdhouse } from 'src/database';
-import { FindOneOptions, Repository } from 'typeorm';
+import { birdhouseDS } from './database/data-source';
+import { Birdhouse } from 'src/birdhouse/database';
+import { FindOneOptions, LessThan, MoreThan, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { Events } from 'src/database/entity/Events';
+import { Events } from 'src/birdhouse/database/entity/Events';
 
 export class BirdhouseService {
   constructor(
@@ -18,8 +18,16 @@ export class BirdhouseService {
    * Get all birdhouses in the database
    * @returns A promise containing a list of birdhouses
    */
-  async findAll(): Promise<Birdhouse[]> {
-    return await this.birdhouseRepository.find();
+  async findAll(options?: FindOneOptions<Birdhouse>): Promise<Birdhouse[]> {
+    return await this.birdhouseRepository.find(options);
+  }
+
+  /**
+   * Delete a birdhouse from the database
+   * @param id UBID of birdhouse
+   */
+  async delete(id: string) {
+    this.birdhouseRepository.delete({ ubid: id });
   }
 
   /**
@@ -29,6 +37,7 @@ export class BirdhouseService {
    */
   async findOne(options?: FindOneOptions<Birdhouse>): Promise<Birdhouse> {
     const birdhouse = await this.birdhouseRepository.findOne(options);
+    if (!birdhouse) return null;
     delete birdhouse.ubid;
     delete birdhouse.uuid;
     return birdhouse;
