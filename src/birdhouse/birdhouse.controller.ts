@@ -99,16 +99,17 @@ export class BirdhouseController {
   ): Promise<Birdhouse> {
     const { eggs, birds } = body;
 
+    // This seems redudant, given thee check below validates if it exists
+    if (!eggs || !birds)
+      throw new HttpException(
+        'Please enter the amount of eggs and birds',
+        HttpStatus.BAD_REQUEST,
+      );
+
     // Ensure we are working with numbers and not strings
     if (!isValidNumber(eggs) || !isValidNumber(birds))
       throw new HttpException(
         'Please enter a valid integer',
-        HttpStatus.BAD_REQUEST,
-      );
-
-    if (!eggs || !birds)
-      throw new HttpException(
-        'Please enter the amount of eggs and birds',
         HttpStatus.BAD_REQUEST,
       );
 
