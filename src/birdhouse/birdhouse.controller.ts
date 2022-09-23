@@ -66,7 +66,7 @@ export class BirdhouseController {
     const { longitude, latitude } = body;
 
     // Ensure we are working with numbers and not strings
-    if (isNaN(longitude) || isNaN(latitude))
+    if (!isValidNumber(longitude) || !isValidNumber(latitude))
       throw new HttpException(
         'Please enter a valid integer',
         HttpStatus.BAD_REQUEST,
@@ -100,7 +100,7 @@ export class BirdhouseController {
     const { eggs, birds } = body;
 
     // Ensure we are working with numbers and not strings
-    if (isNaN(eggs) || isNaN(birds))
+    if (!isValidNumber(eggs) || !isValidNumber(birds))
       throw new HttpException(
         'Please enter a valid integer',
         HttpStatus.BAD_REQUEST,
@@ -133,4 +133,8 @@ export class BirdhouseController {
 
     return birdhouse;
   }
+}
+
+function isValidNumber(n: any) {
+  return !isNaN(n) && n < 9007199254740991;
 }
